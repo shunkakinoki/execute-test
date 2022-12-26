@@ -37,21 +37,23 @@ fn main() -> Result<()> {
 
     println!("Balance before: {:#?}", account_bal.unwrap());
 
-    let res = executor.call_raw_committing(
-        H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
-        H160::from_str("0x225E9B54F41F44F42150b6aAA730Da5f2d23FAf2").unwrap(),
-        Bytes::from(""),
-        U256::from(300_000_000),
-    );
-
-    if res.is_err() {
-        println!("Error: {:#?}", res.unwrap_err());
-    }
+    let res = executor
+        .call_raw_committing(
+            H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
+            H160::from_str("0x225E9B54F41F44F42150b6aAA730Da5f2d23FAf2").unwrap(),
+            Bytes::from(""),
+            U256::from(300_000_000),
+        )
+        .unwrap();
 
     let account_bal =
         executor.get_balance(H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap());
 
     println!("Balance after: {:#?}", account_bal.unwrap());
+
+    println!("Gas used: {:#?}", res.gas_used);
+
+    println!("State change: {:#?}", res.state_changeset);
 
     Ok(())
 }
