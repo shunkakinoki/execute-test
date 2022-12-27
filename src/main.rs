@@ -1,6 +1,6 @@
 use anyhow::{Ok, Result};
 use bytes::Bytes;
-use foundry_evm::executor::{fork::CreateFork, Executor};
+use foundry_evm::executor::fork::CreateFork;
 use foundry_evm::executor::{opts::EvmOpts, Backend, ExecutorBuilder};
 use primitive_types::{H160, U256};
 use std::str::FromStr;
@@ -50,10 +50,20 @@ fn main() -> Result<()> {
         executor.get_balance(H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap());
 
     println!("Balance after: {:#?}", account_bal.unwrap());
-
     println!("Gas used: {:#?}", res.gas_used);
-
     println!("State change: {:#?}", res.state_changeset);
+
+    let token_res = executor
+        .call_raw_committing(
+            H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
+            H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
+            hex::decode("a9059cbb000000000000000000000000225e9b54f41f44f42150b6aaa730da5f2d23faf2000000000000000000000000000000000000000000000000000000003b9aca00").expect("valid").into(),
+            U256::zero(),
+        )
+        .unwrap();
+
+    println!("Gas used: {:#?}", token_res.gas_used);
+    println!("State change: {:#?}", token_res.state_changeset);
 
     Ok(())
 }
