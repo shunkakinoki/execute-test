@@ -1478,6 +1478,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "foundry-simulator"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytes",
+ "eyre",
+ "foundry-evm",
+ "hex",
+ "primitive-types",
+ "revm",
+ "ruint",
+]
+
+[[package]]
 name = "foundry-utils"
 version = "0.2.0"
 source = "git+https://github.com/foundry-rs/foundry#b554ab1fec09087fa3a35c6728968edca6debcf2"
@@ -2783,21 +2797,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
-]
-
-[[package]]
-name = "pyrevm"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bytes",
- "eyre",
- "foundry-evm",
- "hex",
- "primitive-types",
- "pyo3",
- "revm",
- "ruint",
 ]
 
 [[package]]
