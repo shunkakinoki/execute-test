@@ -89,17 +89,6 @@ fn main() -> Result<()> {
         )
         .unwrap();
 
-    let token_balance_res = executor
-        .call_raw_committing(
-            H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
-            H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
-            hex::decode("70a082310000000000000000000000004fd9d0ee6d6564e80a9ee00c0163fc952d0a45ed")
-                .expect("valid")
-                .into(),
-            U256::zero(),
-        )
-        .unwrap();
-
     println!(
         "Token balance after: {:#?}",
         U256::from_big_endian(token_balance_res.result.as_ref())
