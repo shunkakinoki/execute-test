@@ -3,10 +3,10 @@ use bytes::Bytes;
 use foundry_evm::executor::fork::CreateFork;
 use foundry_evm::executor::{opts::EvmOpts, Backend, ExecutorBuilder};
 use primitive_types::{H160, U256};
+use std::str::from_utf8;
 use std::str::FromStr;
 
 fn main() -> Result<()> {
-    println!("Hello, world!");
     let fork_url = String::from("https://mainnet.infura.io/v3/4c94c74f4dce4c43a8081cc3ebd6b3b9");
     let gas_limit: u64 = 18446744073709551615;
 
@@ -89,9 +89,25 @@ fn main() -> Result<()> {
         )
         .unwrap();
 
+    let token_name_res = executor
+        .call_raw(
+            H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
+            H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
+            hex::decode("95d89b41").expect("valid").into(),
+            U256::zero(),
+        )
+        .unwrap();
+
     println!(
         "Token balance after: {:#?}",
         U256::from_big_endian(token_balance_res.result.as_ref())
+    );
+    println!(
+        "Token symbol: {:#?}",
+        from_utf8(token_name_res.result.as_ref())
+            .unwrap()
+            .replace(" ", "")
+            .trim_matches('\0')
     );
     println!("Gas used: {:#?}", token_res.gas_used);
     // println!("State change: {:#?}", token_res.state_changeset);
