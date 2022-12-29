@@ -1,7 +1,5 @@
 use anyhow::{Ok, Result};
 use bytes::Bytes;
-use ethers::abi::Contract;
-use ethers::contract::abigen;
 use foundry_evm::executor::fork::CreateFork;
 use foundry_evm::executor::CallResult;
 use foundry_evm::executor::{opts::EvmOpts, Backend, ExecutorBuilder};
@@ -9,18 +7,6 @@ use primitive_types::{H160, U256};
 use std::str::from_utf8;
 use std::str::FromStr;
 use std::string::String;
-
-abigen!(
-    ERC20Contract,
-    r#"[
-        function balanceOf(address account) external view returns (uint256)
-        function decimals() external view returns (uint8)
-        function symbol() external view returns (string memory)
-        function transfer(address to, uint256 amount) external returns (bool)
-        event Transfer(address indexed from, address indexed to, uint256 value)
-    ]"#,
-    event_derives(serde::Deserialize, serde::Serialize)
-);
 
 fn main() -> Result<()> {
     let fork_url = String::from("https://mainnet.infura.io/v3/4c94c74f4dce4c43a8081cc3ebd6b3b9");
