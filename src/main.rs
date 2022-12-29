@@ -127,5 +127,15 @@ fn main() -> Result<()> {
 
     println!("Token symbol: {:#?}", token_name_res.result);
 
+    let error_res = executor
+        .call_raw_committing(
+            H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
+            H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
+            hex::decode("9cbb000000000000000000000000225e9b54f41f44f42150b6aaa730da5f2d23faf2000000000000000000000000000000000000000000000000000000003b9aca00").expect("valid").into(),
+            U256::zero(),
+        )
+        .unwrap();
+    println!("Tx error: {:#?}", error_res.exit_reason);
+
     Ok(())
 }
