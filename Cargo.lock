@@ -1053,6 +1053,7 @@ dependencies = [
  "ethers-contract-abigen",
  "ethers-contract-derive",
  "ethers-core",
+ "ethers-derive-eip712",
  "ethers-providers",
  "futures-util",
  "hex",
@@ -1129,6 +1130,18 @@ dependencies = [
  "thiserror",
  "tiny-keccak",
  "unicode-xid",
+]
+
+[[package]]
+name = "ethers-derive-eip712"
+version = "0.17.0"
+source = "git+https://github.com/gakonst/ethers-rs#a07581489a12b1007c3a261dc8df2bbdc4e27918"
+dependencies = [
+ "ethers-core",
+ "hex",
+ "quote",
+ "serde_json",
+ "syn",
 ]
 
 [[package]]
@@ -1483,12 +1496,15 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bytes",
+ "ethers",
  "eyre",
  "foundry-evm",
  "hex",
  "primitive-types",
  "revm",
  "ruint",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

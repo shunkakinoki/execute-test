@@ -1,10 +1,26 @@
 use anyhow::{Ok, Result};
 use bytes::Bytes;
+use ethers::abi::Contract;
+use ethers::contract::abigen;
 use foundry_evm::executor::fork::CreateFork;
+use foundry_evm::executor::CallResult;
 use foundry_evm::executor::{opts::EvmOpts, Backend, ExecutorBuilder};
 use primitive_types::{H160, U256};
 use std::str::from_utf8;
 use std::str::FromStr;
+use std::string::String;
+
+abigen!(
+    ERC20Contract,
+    r#"[
+        function balanceOf(address account) external view returns (uint256)
+        function decimals() external view returns (uint8)
+        function symbol() external view returns (string memory)
+        function transfer(address to, uint256 amount) external returns (bool)
+        event Transfer(address indexed from, address indexed to, uint256 value)
+    ]"#,
+    event_derives(serde::Deserialize, serde::Serialize)
+);
 
 fn main() -> Result<()> {
     let fork_url = String::from("https://mainnet.infura.io/v3/4c94c74f4dce4c43a8081cc3ebd6b3b9");
@@ -111,6 +127,19 @@ fn main() -> Result<()> {
     );
     println!("Gas used: {:#?}", token_res.gas_used);
     // println!("State change: {:#?}", token_res.state_changeset);
+
+    let token_name_res: CallResult<String> = executor
+        .call(
+            H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
+            H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
+            "symbol()(string)",
+            (),
+            0.into(),
+            None,
+        )
+        .unwrap();
+
+    println!("Token symbol: {:#?}", token_name_res.result);
 
     Ok(())
 }
