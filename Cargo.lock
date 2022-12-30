@@ -1496,6 +1496,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "bytes",
+ "clap 4.0.15",
  "ethers",
  "eyre",
  "foundry-common",
