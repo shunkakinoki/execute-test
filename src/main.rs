@@ -1,8 +1,8 @@
 use anyhow::{Ok, Result};
 use bytes::Bytes;
+use ethers::abi::Detokenize;
 use ethers::types::Log;
 use foundry_evm::executor::fork::CreateFork;
-use foundry_evm::executor::CallResult;
 use foundry_evm::executor::Executor;
 use foundry_evm::executor::{opts::EvmOpts, Backend, ExecutorBuilder};
 use futures::future::join_all;
@@ -128,7 +128,7 @@ async fn main() -> Result<()> {
         println!("transfer log found!")
     }
 
-    async fn resolve_call_args(args: &[String], executor: Executor) -> Vec<String> {
+    async fn resolve_call_args<D: Detokenize>(args: &[String], executor: Executor) -> Vec<D> {
         join_all(args.iter().map(|arg| async {
             executor
                 .call(
@@ -150,7 +150,7 @@ async fn main() -> Result<()> {
         String::from("symbol()(string)"),
     ];
 
-    let results = resolve_call_args(&c, executor).await;
+    let results = resolve_call_args::<String>(&c, executor).await;
 
     println!("Token name: {:#?}", results.first().unwrap());
     println!(

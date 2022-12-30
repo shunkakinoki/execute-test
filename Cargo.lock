@@ -1498,6 +1498,7 @@ dependencies = [
  "bytes",
  "ethers",
  "eyre",
+ "foundry-common",
  "foundry-evm",
  "futures",
  "hex",
