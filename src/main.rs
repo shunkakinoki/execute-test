@@ -150,13 +150,20 @@ async fn main() -> Result<()> {
         String::from("symbol()(string)"),
     ];
 
-    let results = resolve_call_args::<String>(&c, executor).await;
+    let results = resolve_call_args::<String>(&c, executor.clone()).await;
 
     println!("Token name: {:#?}", results.first().unwrap());
     println!(
         "Token symbol: {:#?}",
         results.get(results.len().wrapping_sub(1)).unwrap()
     );
+
+    let c = [String::from("totalSupply()(uint256)")];
+
+    let results = resolve_call_args::<U256>(&c, executor.clone()).await;
+
+    println!("Total supply: {:#?}", results.first().unwrap());
+
     // println!("Token name: {:#?}", results.last().unwrap());
 
     // let token_name_res: CallResult<String> = executor
