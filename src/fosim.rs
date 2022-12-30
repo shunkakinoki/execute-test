@@ -1,13 +1,21 @@
-use clap::{CommandFactory, Parser, Subcommand};
+use clap::Parser;
+
+mod cmd;
+pub use cmd::NodeArgs;
 
 /// A fast local Ethereum simulator based on top of foundry.
 #[derive(Debug, Parser)]
 #[clap(name = "fosim")]
-pub struct App {}
+pub struct App {
+    #[clap(flatten)]
+    pub node: NodeArgs,
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = App::parse();
+
+    app.node.run().await?;
 
     Ok(())
 }

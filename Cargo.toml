@@ -2,10 +2,9 @@
 name = "foundry-simulator"
 version = "0.1.0"
 edition = "2021"
-default-run = "fosim"
 
 [[bin]]
-name = "fosim"
+name = "foundry-simulator"
 path = "src/fosim.rs"
 
 [dependencies]
