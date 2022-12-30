@@ -3,14 +3,17 @@ use bytes::Bytes;
 use ethers::types::Log;
 use foundry_evm::executor::fork::CreateFork;
 use foundry_evm::executor::CallResult;
+use foundry_evm::executor::Executor;
 use foundry_evm::executor::{opts::EvmOpts, Backend, ExecutorBuilder};
+use futures::future::join_all;
 use primitive_types::H256;
 use primitive_types::{H160, U256};
 use std::str::from_utf8;
 use std::str::FromStr;
 use std::string::String;
 
-fn main() -> Result<()> {
+#[tokio::main]
+async fn main() -> Result<()> {
     let fork_url = String::from("https://mainnet.infura.io/v3/4c94c74f4dce4c43a8081cc3ebd6b3b9");
     let gas_limit: u64 = 18446744073709551615;
 
@@ -125,28 +128,59 @@ fn main() -> Result<()> {
         println!("transfer log found!")
     }
 
-    let token_name_res: CallResult<String> = executor
-        .call(
-            H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
-            H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
-            "symbol()(string)",
-            (),
-            0.into(),
-            None,
-        )
-        .unwrap();
+    async fn resolve_call_args(args: &[String], executor: Executor) -> Vec<String> {
+        join_all(args.iter().map(|arg| async {
+            executor
+                .call(
+                    H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
+                    H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
+                    arg.clone(),
+                    (),
+                    0.into(),
+                    None,
+                )
+                .unwrap()
+                .result
+        }))
+        .await
+    }
 
-    println!("Token symbol: {:#?}", token_name_res.result);
+    let c = [
+        String::from("name()(string)"),
+        String::from("symbol()(string)"),
+    ];
 
-    let error_res = executor
-        .call_raw_committing(
-            H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
-            H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
-            hex::decode("9cbb000000000000000000000000225e9b54f41f44f42150b6aaa730da5f2d23faf2000000000000000000000000000000000000000000000000000000003b9aca00").expect("valid").into(),
-            U256::zero(),
-        )
-        .unwrap();
-    println!("Tx error: {:#?}", error_res.exit_reason);
+    let results = resolve_call_args(&c, executor).await;
+
+    println!("Token name: {:#?}", results.first().unwrap());
+    println!(
+        "Token symbol: {:#?}",
+        results.get(results.len().wrapping_sub(1)).unwrap()
+    );
+    // println!("Token name: {:#?}", results.last().unwrap());
+
+    // let token_name_res: CallResult<String> = executor
+    //     .call(
+    //         H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
+    //         H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
+    //         "symbol()(string)",
+    //         (),
+    //         0.into(),
+    //         None,
+    //     )
+    //     .unwrap();
+
+    // println!("Token symbol: {:#?}", token_name_res.result);
+
+    // let error_res = executor
+    //     .call_raw_committing(
+    //         H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
+    //         H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
+    //         hex::decode("9cbb000000000000000000000000225e9b54f41f44f42150b6aaa730da5f2d23faf2000000000000000000000000000000000000000000000000000000003b9aca00").expect("valid").into(),
+    //         U256::zero(),
+    //     )
+    //     .unwrap();
+    // println!("Tx error: {:#?}", error_res.exit_reason);
 
     Ok(())
 }

@@ -1499,12 +1499,14 @@ dependencies = [
  "ethers",
  "eyre",
  "foundry-evm",
+ "futures",
  "hex",
  "primitive-types",
  "revm",
  "ruint",
  "serde",
  "serde_json",
+ "tokio",
 ]
 
 [[package]]
