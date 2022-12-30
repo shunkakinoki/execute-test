@@ -1,8 +1,10 @@
 use anyhow::{Ok, Result};
 use bytes::Bytes;
+use ethers::types::Log;
 use foundry_evm::executor::fork::CreateFork;
 use foundry_evm::executor::CallResult;
 use foundry_evm::executor::{opts::EvmOpts, Backend, ExecutorBuilder};
+use primitive_types::H256;
 use primitive_types::{H160, U256};
 use std::str::from_utf8;
 use std::str::FromStr;
@@ -53,7 +55,7 @@ fn main() -> Result<()> {
 
     println!("Balance after: {:#?}", account_bal.unwrap());
     println!("Gas used: {:#?}", res.gas_used);
-    // println!("State change: {:#?}", res.state_changeset);
+    // println!("State change: {:#?}", res);
 
     let token_balance_res = executor
         .call_raw_committing(
@@ -112,7 +114,16 @@ fn main() -> Result<()> {
             .trim_matches('\0')
     );
     println!("Gas used: {:#?}", token_res.gas_used);
-    // println!("State change: {:#?}", token_res.state_changeset);
+    // println!("State change: {:#?}", token_res);
+
+    if token_res.logs.iter().any(|log: &Log| {
+        return log.topics.contains(
+            &H256::from_str("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
+                .unwrap(),
+        );
+    }) {
+        println!("transfer log found!")
+    }
 
     let token_name_res: CallResult<String> = executor
         .call(
