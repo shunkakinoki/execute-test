@@ -61,7 +61,8 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
         if log.topics.contains(
             &H256::from_str("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
                 .unwrap(),
-        ) {
+        ) && log.topics.len() == 3
+        {
             let c = [String::from("name()(string)"), String::from("symbol()(string)")];
 
             let results = resolve_call_args::<String>(&c, &executor, &config).await;
@@ -73,8 +74,6 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
                 Address::from_slice(&log.topics[1][12..32]),
                 Address::from_slice(&log.topics[2][12..32]),
             );
-
-            println!("Logs: {:#?}", &log);
 
             return Ok(r);
         }
