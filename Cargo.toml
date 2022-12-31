@@ -20,6 +20,7 @@ ethers = { git = "https://github.com/gakonst/ethers-rs", features = [
     "abigen-offline",
     "solc-full",
 ] }
+foundry-cli = { git = "https://github.com/foundry-rs/foundry" }
 foundry-common = { git = "https://github.com/foundry-rs/foundry" }
 foundry-evm = { git = "https://github.com/foundry-rs/foundry" }
 hex = "0.4.3"

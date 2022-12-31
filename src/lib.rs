@@ -9,7 +9,7 @@ use foundry_evm::executor::{fork::CreateFork, opts::EvmOpts, Backend, Executor, 
 use futures::future::join_all;
 use std::str::FromStr;
 
-pub fn spawn(config: NodeConfig) -> Executor {
+pub fn spawn(config: &NodeConfig) -> Executor {
     let gas_limit: u64 = 18446744073709551615;
 
     let evm_opts = EvmOpts { fork_url: Some(config.fork_url.clone()), ..Default::default() };
@@ -42,10 +42,10 @@ pub async fn resolve_call_args<D: Detokenize>(args: &[String], executor: Executo
     .await
 }
 
-pub async fn simulate(mut executor: Executor) -> Result<()> {
+pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<()> {
     let res = executor
         .call_raw_committing(
-            H160::from_str("0x4fd9D0eE6D6564E80A9Ee00c0163fC952d0A45Ed").unwrap(),
+            config.from,
             H160::from_str("0x04F2694C8fcee23e8Fd0dfEA1d4f5Bb8c352111F").unwrap(),
             hex::decode("a9059cbb000000000000000000000000225e9b54f41f44f42150b6aaa730da5f2d23faf2000000000000000000000000000000000000000000000000000000003b9aca00").expect("valid").into(),
             U256::zero(),
