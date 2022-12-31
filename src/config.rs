@@ -10,4 +10,6 @@ pub struct NodeConfig {
     pub to: Address,
     /// calldata
     pub calldata: String,
+    /// value
+    pub value: String,
 }

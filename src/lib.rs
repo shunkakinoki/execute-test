@@ -43,7 +43,7 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<()>
             config.from,
             config.to,
             hex::decode(&config.calldata).unwrap_or(Bytes::from("").to_vec()).into(),
-            U256::zero(),
+            U256::from_str(&config.value).unwrap_or(U256::zero()).into(),
         )
         .unwrap();
 

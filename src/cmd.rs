@@ -42,9 +42,18 @@ pub struct NodeArgs {
         default_value = "",
         visible_alias = "data",
         value_name = "CALLDATA",
-        help_heading = "Calldata"
+        help_heading = "Calldata of the transaction"
     )]
     pub calldata: String,
+    #[clap(
+        long,
+        short,
+        default_value = "0",
+        visible_alias = "value",
+        value_name = "VALUE",
+        help_heading = "Value of transaction denoted in native coin"
+    )]
+    pub value: String,
 }
 
 /// Code from: https://github.com/foundry-rs/foundry/blob/master/cli/src/cmd/cast/storage.rs#L77
@@ -61,7 +70,7 @@ impl NodeArgs {
     pub async fn into_node_config(self) -> NodeConfig {
         let from = get_address(&self.url, &self.from).await;
         let to = get_address(&self.url, &self.to).await;
-        NodeConfig { url: self.url, calldata: self.calldata, from, to }
+        NodeConfig { url: self.url, calldata: self.calldata, value: self.value, from, to }
     }
 }
 
