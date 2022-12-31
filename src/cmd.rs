@@ -39,10 +39,10 @@ pub struct NodeArgs {
     #[clap(
         long,
         short,
-        default_value = "",
+        default_value = "0x",
         visible_alias = "data",
         value_name = "CALLDATA",
-        help_heading = "Calldata of the transaction"
+        help_heading = "Calldata of the transaction in hex format"
     )]
     pub calldata: String,
     #[clap(
@@ -70,7 +70,8 @@ impl NodeArgs {
     pub async fn into_node_config(self) -> NodeConfig {
         let from = get_address(&self.url, &self.from).await;
         let to = get_address(&self.url, &self.to).await;
-        NodeConfig { url: self.url, calldata: self.calldata, value: self.value, from, to }
+        let calldata = self.calldata.replace("0x", "");
+        NodeConfig { url: self.url, value: self.value, calldata, from, to }
     }
 }
 
