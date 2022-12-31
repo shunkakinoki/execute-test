@@ -4,7 +4,7 @@ use bytes::Bytes;
 pub use config::NodeConfig;
 use ethers::{
     abi::Detokenize,
-    types::{Log, H256, U256},
+    types::{H256, U256},
 };
 use foundry_evm::executor::{fork::CreateFork, opts::EvmOpts, Backend, Executor, ExecutorBuilder};
 use futures::future::join_all;
@@ -57,26 +57,27 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
         )
         .unwrap();
 
-    if res.logs.iter().any(|log: &Log| {
-        return log.topics.contains(
+    for log in res.logs {
+        if log.topics.contains(
             &H256::from_str("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
                 .unwrap(),
-        );
-    }) {
-        let c = [String::from("name()(string)"), String::from("symbol()(string)")];
+        ) {
+            let c = [String::from("name()(string)"), String::from("symbol()(string)")];
 
-        let results = resolve_call_args::<String>(&c, &executor, &config).await;
+            let results = resolve_call_args::<String>(&c, &executor, &config).await;
 
-        println!("Logs: {:#?}", res);
+            let r = format!(
+                "Transfering {} {} from {} to {}",
+                U256::from_big_endian(&log.data[0..32]),
+                results.last().unwrap(),
+                config.from,
+                config.to
+            );
 
-        let r = format!(
-            "Transfering {} {} from {} to {}",
-            "0",
-            results.last().unwrap(),
-            config.from,
-            config.to
-        );
-        return Ok(r);
+            println!("Logs: {:#?}", &log.data);
+
+            return Ok(r);
+        }
     }
 
     Ok("".to_string())

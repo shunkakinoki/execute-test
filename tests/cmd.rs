@@ -28,5 +28,5 @@ async fn test_token_transfer() {
         .with_calldata("a9059cbb000000000000000000000000225e9b54f41f44f42150b6aaa730da5f2d23faf2000000000000000000000000000000000000000000000000000000003b9aca00".to_string());
     let s = spawn(&config);
     let res = simulate(s, &config).await.unwrap();
-    assert_eq!(res, "Transfering 0 sOHM from 0x4fd9…45ed to 0x04f2…111f".to_string())
+    assert_eq!(res, "Transfering 1000000000 sOHM from 0x4fd9…45ed to 0x04f2…111f".to_string())
 }
