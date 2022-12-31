@@ -37,15 +37,15 @@ pub async fn resolve_call_args<D: Detokenize>(
     .await
 }
 
-pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<()> {
-    if config.calldata == "" {
-        println!(
+pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<String> {
+    if config.calldata == "" && config.value != "0" {
+        let r = format!(
             "Transfering {} ETH from {} to {}",
             (&config.value).parse::<f64>().unwrap() / 1e18,
             config.from,
             config.to
         );
-        return Ok(());
+        return Ok(r);
     }
 
     let res = executor
@@ -71,5 +71,5 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<()>
         println!("Token symbol: {:#?}", results.get(results.len().wrapping_sub(1)).unwrap());
     }
 
-    Ok(())
+    Ok("".to_string())
 }

@@ -15,7 +15,7 @@ pub struct App {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let app = App::parse();
 
-    app.node.run().await?;
+    app.node.run().await;
 
     Ok(())
 }

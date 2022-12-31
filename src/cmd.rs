@@ -51,7 +51,7 @@ pub struct NodeArgs {
         default_value = "0",
         visible_alias = "value",
         value_name = "VALUE",
-        help_heading = "Value of transaction denoted in native coin"
+        help_heading = "Value of transaction denoted in gwei in decimal format"
     )]
     pub value: String,
 }
@@ -76,11 +76,9 @@ impl NodeArgs {
 }
 
 impl NodeArgs {
-    pub async fn run(self) -> Result<(), Box<dyn std::error::Error>> {
+    pub async fn run(self) -> String {
         let config = self.into_node_config().await;
         let s = spawn(&config);
-        simulate(s, &config).await?;
-
-        Ok(())
+        simulate(s, &config).await.unwrap()
     }
 }

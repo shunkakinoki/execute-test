@@ -4406,7 +4406,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ad3a104dc8c3867f653b0fec89c65e00b0ceb752718ad282177a7e0f33257ac"
 dependencies = [
  "derive_more",
- "primitive-types 0.11.1",
+ "primitive-types 0.12.1",
  "pyo3",
  "ruint-macro",
  "rustc_version",
