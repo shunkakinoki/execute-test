@@ -68,7 +68,7 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
 
             let r = format!(
                 "Transfering {} {} from {} to {}",
-                U256::from_big_endian(&log.data[0..32]),
+                U256::from_big_endian(&log.data[0..32]).as_u128() as f64 / 1e18,
                 results.last().unwrap(),
                 config.from,
                 config.to
