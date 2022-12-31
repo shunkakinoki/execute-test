@@ -3,7 +3,7 @@ use anyhow::{Ok, Result};
 use bytes::Bytes;
 pub use config::NodeConfig;
 use ethers::{
-    abi::Detokenize,
+    abi::{Detokenize, Token},
     types::{Address, H256, U256},
 };
 use foundry_evm::executor::{fork::CreateFork, opts::EvmOpts, Backend, Executor, ExecutorBuilder};
@@ -63,14 +63,18 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
                 .unwrap(),
         ) && log.topics.len() == 3
         {
-            let c = [String::from("name()(string)"), String::from("symbol()(string)")];
+            let c = [
+                String::from("name()(string)"),
+                String::from("symbol()(string)"),
+                String::from("decimals()(uint8)"),
+            ];
 
-            let results = resolve_call_args::<String>(&c, &executor, &config).await;
+            let results = resolve_call_args::<Token>(&c, &executor, &config).await;
 
             let r = format!(
                 "Transfering {} {} from {} to {}",
                 U256::from_big_endian(&log.data[0..32]).as_u128() as f64 / 1e18,
-                results.last().unwrap(),
+                results.get(results.len().wrapping_sub(2)).unwrap(),
                 Address::from_slice(&log.topics[1][12..32]),
                 Address::from_slice(&log.topics[2][12..32]),
             );
@@ -79,7 +83,5 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
         }
     }
 
-    // 40 -> [12..32]
-    // 64 -> [0..32]
     Ok("".to_string())
 }
