@@ -1,4 +1,5 @@
 use ethers::types::Address;
+use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub struct NodeConfig {
@@ -27,8 +28,7 @@ impl Default for NodeConfig {
 }
 
 impl NodeConfig {
-    /// Returns a new config intended to be used in tests, which does not print
-    /// and binds to a random, free port by setting it to `0`
+    /// Code from: https://github.com/foundry-rs/foundry/blob/master/anvil/src/config.rs#L320
     #[doc(hidden)]
     pub fn test() -> Self {
         Self { ..Default::default() }
@@ -36,11 +36,20 @@ impl NodeConfig {
 }
 
 impl NodeConfig {
-    #[must_use]
-    pub fn with_value<U: Into<String>>(mut self, value: Option<U>) -> Self {
-        if let Some(value) = value {
-            self.value = value.into();
-        }
+    pub fn with_from(mut self, from: String) -> Self {
+        self.from = Address::from_str(&from).unwrap();
+        self
+    }
+    pub fn with_to(mut self, to: String) -> Self {
+        self.to = Address::from_str(&to).unwrap();
+        self
+    }
+    pub fn with_value(mut self, value: String) -> Self {
+        self.value = value;
+        self
+    }
+    pub fn with_calldata(mut self, calldata: String) -> Self {
+        self.calldata = calldata;
         self
     }
 }

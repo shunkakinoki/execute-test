@@ -67,8 +67,16 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
 
         let results = resolve_call_args::<String>(&c, &executor, &config).await;
 
-        println!("Token name: {:#?}", results.first().unwrap());
-        println!("Token symbol: {:#?}", results.get(results.len().wrapping_sub(1)).unwrap());
+        println!("Logs: {:#?}", res);
+
+        let r = format!(
+            "Transfering {} {} from {} to {}",
+            "0",
+            results.last().unwrap(),
+            config.from,
+            config.to
+        );
+        return Ok(r);
     }
 
     Ok("".to_string())
