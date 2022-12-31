@@ -38,6 +38,16 @@ pub async fn resolve_call_args<D: Detokenize>(
 }
 
 pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<()> {
+    if config.calldata == "" {
+        println!(
+            "Transfering {} ETH from {} to {}",
+            (&config.value).parse::<f64>().unwrap() / 1e18,
+            config.from,
+            config.to
+        );
+        return Ok(());
+    }
+
     let res = executor
         .call_raw_committing(
             config.from,
