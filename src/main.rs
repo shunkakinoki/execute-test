@@ -1,9 +1,11 @@
 use anyhow::{Ok, Result};
 use bytes::Bytes;
-use ethers::{abi::Detokenize, types::Log};
+use ethers::{
+    abi::Detokenize,
+    types::{Log, H160, U256},
+};
 use foundry_evm::executor::{fork::CreateFork, opts::EvmOpts, Backend, Executor, ExecutorBuilder};
 use futures::future::join_all;
-use primitive_types::{H160, H256, U256};
 use std::{
     str::{from_utf8, FromStr},
     string::String,

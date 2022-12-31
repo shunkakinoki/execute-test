@@ -1,16 +1,10 @@
 use clap::Parser;
-use foundry_simulator::{spawn, NodeConfig};
+use foundry_simulator::{simulate, spawn, NodeConfig};
 
 #[derive(Clone, Debug, Parser)]
 pub struct NodeArgs {
-    #[clap(
-        long,
-        short,
-        help = "Port number to listen on.",
-        default_value = "8000",
-        value_name = "NUM"
-    )]
-    pub port: u16,
+    #[clap(long, short, visible_alias = "url", value_name = "URL", help_heading = "Fork config")]
+    pub fork_url: Option<String>,
 }
 
 impl NodeArgs {
@@ -22,7 +16,7 @@ impl NodeArgs {
 impl NodeArgs {
     pub async fn run(self) -> Result<(), Box<dyn std::error::Error>> {
         let s = spawn(self.into_node_config()).await;
-        println!("{:?}", s.unwrap());
+        simulate(s).await?;
         Ok(())
     }
 }
