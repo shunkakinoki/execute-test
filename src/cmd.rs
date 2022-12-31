@@ -84,9 +84,10 @@ impl NodeArgs {
 }
 
 impl NodeArgs {
-    pub async fn run(self) -> String {
+    pub async fn run(self) -> () {
         let config = self.into_node_config().await;
         let s = spawn(&config);
-        simulate(s, &config).await.unwrap()
+        let r = simulate(s, &config).await.unwrap();
+        println!("{}", r)
     }
 }
