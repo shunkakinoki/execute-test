@@ -54,6 +54,14 @@ pub struct NodeArgs {
         help_heading = "Value of transaction denoted in gwei in decimal format"
     )]
     pub value: String,
+    #[clap(
+        long,
+        short,
+        visible_alias = "block",
+        value_name = "BLOCK",
+        help_heading = "Number of block number to fork"
+    )]
+    pub block: Option<u64>,
 }
 
 /// Code from: https://github.com/foundry-rs/foundry/blob/master/cli/src/cmd/cast/storage.rs#L77
@@ -71,7 +79,7 @@ impl NodeArgs {
         let from = get_address(&self.url, &self.from).await;
         let to = get_address(&self.url, &self.to).await;
         let calldata = self.calldata.replace("0x", "");
-        NodeConfig { url: self.url, value: self.value, calldata, from, to }
+        NodeConfig { url: self.url, value: self.value, block: self.block, calldata, from, to }
     }
 }
 

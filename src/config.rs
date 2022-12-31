@@ -13,6 +13,8 @@ pub struct NodeConfig {
     pub calldata: String,
     /// value
     pub value: String,
+    /// block
+    pub block: Option<u64>,
 }
 
 impl Default for NodeConfig {
@@ -23,6 +25,7 @@ impl Default for NodeConfig {
             to: Address::zero(),
             calldata: "".to_string(),
             value: "0".to_string(),
+            block: None,
         }
     }
 }
@@ -50,6 +53,10 @@ impl NodeConfig {
     }
     pub fn with_calldata(mut self, calldata: String) -> Self {
         self.calldata = calldata;
+        self
+    }
+    pub fn with_block(mut self, block: Option<u64>) -> Self {
+        self.block = block;
         self
     }
 }

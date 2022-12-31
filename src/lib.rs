@@ -13,7 +13,11 @@ use std::str::FromStr;
 pub fn spawn(config: &NodeConfig) -> Executor {
     let gas_limit: u64 = 18446744073709551615;
 
-    let evm_opts = EvmOpts { fork_url: Some(config.url.clone()), ..Default::default() };
+    let evm_opts = EvmOpts {
+        fork_url: Some(config.url.clone()),
+        fork_block_number: config.block,
+        ..Default::default()
+    };
 
     let env = evm_opts.evm_env_blocking().unwrap();
     let builder = ExecutorBuilder::default().with_gas_limit(gas_limit.into()).set_tracing(true);
