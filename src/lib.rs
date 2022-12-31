@@ -6,10 +6,11 @@ use ethers::{
     abi::{Detokenize, Token},
     types::{Address, H256, U256},
 };
+use foundry_evm::executor::CallResult;
+use foundry_evm::executor::EvmError;
 use foundry_evm::executor::{fork::CreateFork, opts::EvmOpts, Backend, Executor, ExecutorBuilder};
 use futures::future::join_all;
 use std::str::FromStr;
-
 pub fn spawn(config: &NodeConfig) -> Executor {
     let gas_limit: u64 = 18446744073709551615;
 
@@ -41,6 +42,22 @@ pub async fn resolve_call_args<D: Detokenize>(
     .await
 }
 
+pub async fn resolve_interface<D: Detokenize>(
+    arg: &String,
+    interface: &String,
+    executor: &Executor,
+    config: &NodeConfig,
+) -> Result<CallResult<D>, EvmError> {
+    executor.call(
+        config.from,
+        config.to,
+        arg.clone(),
+        vec![hex::decode(interface).unwrap()],
+        0.into(),
+        None,
+    )
+}
+
 pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<String> {
     if config.calldata == "" && config.value != "0" {
         let r = format!(
@@ -61,7 +78,25 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
         )
         .unwrap();
 
-    for log in res.logs {
+    if res.reverted {
+        println!("Logs: {:#?}", &res);
+        return Ok("Reverted".to_string());
+    }
+
+    // let c = [String::from("supportsInterface()(bool)")];
+    // let results = resolve_call_args::<Token>(&c, &executor, &config).await;
+    // println!("Logs: {:#?}", &results);
+
+    // let a = resolve_interface::<Token>(
+    //     &String::from("supportsInterface()(string)"),
+    //     &String::from("0x06fdde03"),
+    //     &executor,
+    //     &config,
+    // )
+    // .await;
+    // println!("Supports Interface: {:#?}", &a);
+
+    for log in &res.logs {
         if log.topics.contains(
             &H256::from_str("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
                 .unwrap(),
@@ -85,7 +120,38 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
 
             return Ok(r);
         }
+        if log.topics.contains(
+            &H256::from_str("0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
+                .unwrap(),
+        ) && log.topics.len() == 4
+        {
+            let c = [String::from("name()(string)")];
+
+            let results = resolve_call_args::<Token>(&c, &executor, &config).await;
+
+            if Address::from_slice(&log.topics[1][12..32]) == Address::zero() {
+                let r = format!(
+                    "Minting {}#{} to {}",
+                    results.first().unwrap(),
+                    U256::from_big_endian(&log.topics[3][0..32]).as_u128() as f64,
+                    Address::from_slice(&log.topics[2][12..32]),
+                );
+                return Ok(r);
+            }
+
+            let r = format!(
+                "Transfering {}#{} from {} to {}",
+                results.first().unwrap(),
+                U256::from_big_endian(&log.topics[3][0..32]).as_u128() as f64,
+                Address::from_slice(&log.topics[1][12..32]),
+                Address::from_slice(&log.topics[2][12..32]),
+            );
+
+            return Ok(r);
+        }
     }
 
-    Ok("none".to_string())
+    println!("Full Log: {:#?}", &res);
+
+    Ok("".to_string())
 }
