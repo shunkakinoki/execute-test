@@ -87,5 +87,5 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
         }
     }
 
-    Ok("".to_string())
+    Ok("none".to_string())
 }
