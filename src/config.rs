@@ -21,11 +21,20 @@ impl Default for NodeConfig {
 }
 
 impl NodeConfig {
-    /// Sets the gas limit
+    /// Sets the from address
     #[must_use]
     pub fn with_from<U: Into<Address>>(mut self, from: Option<U>) -> Self {
         if let Some(from) = from {
             self.from = from.into();
+        }
+        self
+    }
+
+    /// Sets the to address
+    #[must_use]
+    pub fn with_to<U: Into<Address>>(mut self, to: Option<U>) -> Self {
+        if let Some(to) = to {
+            self.to = to.into();
         }
         self
     }
