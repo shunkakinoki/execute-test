@@ -4,7 +4,7 @@ use bytes::Bytes;
 pub use config::NodeConfig;
 use ethers::{
     abi::Detokenize,
-    types::{H256, U256},
+    types::{Address, H256, U256},
 };
 use foundry_evm::executor::{fork::CreateFork, opts::EvmOpts, Backend, Executor, ExecutorBuilder};
 use futures::future::join_all;
@@ -70,15 +70,17 @@ pub async fn simulate(mut executor: Executor, config: &NodeConfig) -> Result<Str
                 "Transfering {} {} from {} to {}",
                 U256::from_big_endian(&log.data[0..32]).as_u128() as f64 / 1e18,
                 results.last().unwrap(),
-                config.from,
-                config.to
+                Address::from_slice(&log.topics[1][12..32]),
+                Address::from_slice(&log.topics[2][12..32]),
             );
 
-            println!("Logs: {:#?}", &log.data);
+            println!("Logs: {:#?}", &log);
 
             return Ok(r);
         }
     }
 
+    // 40 -> [12..32]
+    // 64 -> [0..32]
     Ok("".to_string())
 }
