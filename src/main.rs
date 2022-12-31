@@ -2,7 +2,7 @@ use anyhow::{Ok, Result};
 use bytes::Bytes;
 use ethers::{
     abi::Detokenize,
-    types::{Log, H160, U256},
+    types::{Log, H160, H256, U256},
 };
 use foundry_evm::executor::{fork::CreateFork, opts::EvmOpts, Backend, Executor, ExecutorBuilder};
 use futures::future::join_all;
@@ -144,7 +144,7 @@ async fn main() -> Result<()> {
 
     println!("Total supply: {:#?}", results.first().unwrap());
 
-    // println!("Token name: {:#?}", results.last().unwrap());
+    println!("Token name: {:#?}", results.last().unwrap());
 
     // let token_name_res: CallResult<String> = executor
     //     .call(

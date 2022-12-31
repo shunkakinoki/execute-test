@@ -12,16 +12,16 @@ anyhow = "1.0.68"
 futures = "0.3"
 primitive-types = "0.11.0"
 revm = "2.1.0"
-# clap = { version = "4.0", features = ["derive", "env", "wrap_help"] }
+clap = { version = "4.0", features = ["derive", "env", "wrap_help"] }
 bytes = "1.2.1"
-ethers = { git = "https://github.com/gakonst/ethers-rs", rev = "e26ede21f1044c61e28a1b50c1e332320a0cc409", features = [
+ethers = { git = "https://github.com/gakonst/ethers-rs", features = [
     "legacy",
     "eip712",
     "abigen-offline",
     "solc-full",
 ] }
-foundry-common = { git = "https://github.com/foundry-rs/foundry", rev = "848bb445481bf9a29f9aeb47ff4488c31c7aa7bd" }
-foundry-evm = { git = "https://github.com/foundry-rs/foundry", rev = "848bb445481bf9a29f9aeb47ff4488c31c7aa7bd" }
+foundry-common = { git = "https://github.com/foundry-rs/foundry" }
+foundry-evm = { git = "https://github.com/foundry-rs/foundry" }
 hex = "0.4.3"
 eyre = "0.6.8"
 ruint = { version = "1.4.1", features = ["primitive-types", "pyo3"] }
